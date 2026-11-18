@@ -1,29 +1,27 @@
 #!/bin/sh
 # Vérifie que l'application Laravel répond et que la base de données est à jour.
-# Usage : ./test.sh [url]   (par défaut http://localhost)
 cd "$(dirname "$0")/docker"
 
-URL=${1:-http://localhost}
 ERREURS=0
 
 ok() { echo "OK     $1"; }
 ko() { echo "ECHEC  $1"; ERREURS=$((ERREURS + 1)); }
 
-command -v curl >/dev/null 2>&1 || { echo "curl est requis pour ce test."; exit 1; }
-
-# 1. Le serveur répond avec un code 200 (jusqu'à 60 s : migrations au démarrage)
+# 1. Le serveur répond avec un code 200 (jusqu'à 60 s : migrations au démarrage).
+# La requête est faite depuis le conteneur avec PHP : aucun outil à installer sur la machine.
 code=000
 i=0
 while [ "$i" -lt 30 ]; do
-    code=$(curl -s -o /dev/null -w '%{http_code}' "$URL" || true)
+    code=$(docker-compose exec -T app php -r '$h = @get_headers("http://localhost:8080"); echo $h ? substr($h[0], 9, 3) : "000";' 2>/dev/null || true)
+    code=${code:-000}
     [ "$code" = "200" ] && break
     i=$((i + 1))
     sleep 2
 done
 if [ "$code" = "200" ]; then
-    ok "$URL répond (HTTP 200)"
+    ok "le serveur web répond (HTTP 200)"
 else
-    ko "$URL répond HTTP $code (attendu : 200)"
+    ko "le serveur web répond HTTP $code (attendu : 200)"
 fi
 
 # 2. Laravel s'exécute dans le conteneur
