@@ -1,0 +1,35 @@
+services:
+  app:
+    image: serversideup/php:8.5-fpm-nginx
+    ports:
+      - "80:8080"
+    volumes:
+      - app-code:/var/www/html
+      - ./entrypoint.sh:/entrypoint.sh:ro
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  app-code:
+  dbdata:   
