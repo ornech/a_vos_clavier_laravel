@@ -3,14 +3,8 @@ services:
     build: .
     ports:
       - "80:8080"
-    volumes:
-      - app-code:/var/www/html
-      - ./entrypoint.sh:/entrypoint.sh:ro
     env_file:
       - .env
-    environment:
-      DB_HOST: db
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     depends_on:
       db:
         condition: service_healthy
@@ -31,5 +25,4 @@ services:
       retries: 10
 
 volumes:
-  app-code:
-  dbdata:   
+  dbdata:
