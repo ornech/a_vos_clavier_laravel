@@ -13,6 +13,9 @@ services:
     restart: unless-stopped
     environment:
       HEALTHCHECK_PATH: /up
+      # Les migrations sont volontaires : jamais lancées au démarrage du conteneur.
+      # (Défini ici et non dans .env, qui n'est pas mis à jour sur un serveur existant.)
+      AUTORUN_LARAVEL_MIGRATION: "false"
     volumes:
       - storage:/var/www/html/storage/app
 
