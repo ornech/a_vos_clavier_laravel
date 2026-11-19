@@ -26,6 +26,9 @@ fi
 # récupérer les polices sur fonts.bunny.net.
 # Les images sont lues dans les lignes FROM du Dockerfile (les noms d'étapes
 # déclarés avec AS, comme « base », sont ignorés) : pas de version à dupliquer ici.
+# SC2013 : les noms d'images ne contiennent pas d'espace ; boucle for conservée car, avec set -e,
+# elle arrête le script au premier docker pull en échec (ce que ne ferait pas un pipeline | while read).
+# shellcheck disable=SC2013
 for image in $(awk 'toupper($1) == "FROM" { if (!($2 in etape)) print $2; if (toupper($3) == "AS") etape[$4] = 1 }' Dockerfile); do
     docker pull "$image"
 done

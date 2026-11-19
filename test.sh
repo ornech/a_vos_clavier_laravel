@@ -1,6 +1,6 @@
 #!/bin/sh
 # Vérifie que l'application Laravel répond et que la base de données est à jour.
-cd "$(dirname "$0")/docker"
+cd "$(dirname "$0")/docker" || exit 1
 
 ERREURS=0
 
