@@ -48,15 +48,15 @@ git pull
 
 ## Variables (`docker/.env`)
 
-| Variable | Rôle |
-|---|---|
-| `APP_ENV`, `APP_DEBUG` | `production` et `false` : jamais `true` sur un serveur exposé |
-| `APP_KEY` | Clé de chiffrement, générée une seule fois par `deploy.sh` |
-| `DB_CONNECTION`, `DB_HOST` | Pilote (`mysql` convient à MariaDB) et nom du service `db` |
-| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `DB_ROOT_PASSWORD` | Base et mots de passe (aléatoires, générés une fois), repris par MariaDB (`MARIADB_*`) |
-| `AUTORUN_ENABLED` | Image serversideup/php : au démarrage du conteneur, lance les migrations, `storage:link` et les caches |
-| `LOG_CHANNEL` | `stderr` : journaux visibles avec `docker compose logs` |
-| `HEALTHCHECK_PATH` | `/up` (défini dans le compose) : route de santé de Laravel |
+| Variable                                                        | Rôle                                                                                                   |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `APP_ENV`, `APP_DEBUG`                                          | `production` et `false` : jamais `true` sur un serveur exposé                                          |
+| `APP_KEY`                                                       | Clé de chiffrement, générée une seule fois par `deploy.sh`                                             |
+| `DB_CONNECTION`, `DB_HOST`                                      | Pilote (`mysql` convient à MariaDB) et nom du service `db`                                             |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `DB_ROOT_PASSWORD` | Base et mots de passe (aléatoires, générés une fois), repris par MariaDB (`MARIADB_*`)                 |
+| `AUTORUN_ENABLED`                                               | Image serversideup/php : au démarrage du conteneur, lance les migrations, `storage:link` et les caches |
+| `LOG_CHANNEL`                                                   | `stderr` : journaux visibles avec `docker compose logs`                                                |
+| `HEALTHCHECK_PATH`                                              | `/up` (défini dans le compose) : route de santé de Laravel                                             |
 
 Les autres variables de l'image (par exemple `AUTORUN_LARAVEL_MIGRATION=false` pour désactiver les seules migrations automatiques) : [référence complète](https://serversideup.net/open-source/docker-php/docs/reference/environment-variable-specification).
 
