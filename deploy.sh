@@ -3,10 +3,15 @@
 set -e
 cd "$(dirname "$0")/docker"
 
-# docker/.env n'est pas dans Git : on le crée au premier déploiement.
+# docker/.env n'est pas dans Git : on le crée au premier déploiement,
+# avec des mots de passe de base de données aléatoires.
+# (Ils ne sont générés qu'à la création : MariaDB les enregistre dans le volume
+# au premier démarrage, les changer ensuite casserait la connexion.)
 if [ ! -f .env ]; then
     cp .env.example .env
-    echo "docker/.env créé à partir de .env.example (pensez à changer les mots de passe)."
+    sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(head -c 18 /dev/urandom | base64 | tr -d '/+=')|" .env
+    sed -i "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(head -c 18 /dev/urandom | base64 | tr -d '/+=')|" .env
+    echo "docker/.env créé à partir de .env.example, mots de passe générés."
 fi
 
 # Clé Laravel générée une seule fois (la changer invalide les sessions).
@@ -25,4 +30,6 @@ for image in $(awk 'toupper($1) == "FROM" { if (!($2 in etape)) print $2; if (to
     docker pull "$image"
 done
 
-docker compose up -d --build
+# --wait : la commande ne rend la main que lorsque les services sont « healthy »
+# (migrations comprises) et échoue sinon, ce qui arrête le script (set -e).
+docker compose up -d --build --wait
